@@ -1,0 +1,17 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx/command-set-extension-manifest.schema.json",
+
+  "id": "0145d26d-75dd-41e3-8dbf-f245474fc2e6",
+  "alias": "RetentionControlsCommandSet",
+  "componentType": "Extension",
+  "extensionType": "ListViewCommandSet",
+  "version": "*",
+  "manifestVersion": 2,
+  "requiresCustomScript": false,
+  "items": {
+    "RETENTION_CONTROLS_COMMAND": {
+      "title": { "default": "Retention controls" },
+      "type": "command"
+    }
+  }
+}

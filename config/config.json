@@ -1,0 +1,18 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "retention-controls-command-set": {
+      "components": [
+        {
+          "entrypoint": "./lib/extensions/retentionControls/RetentionControlsCommandSet.js",
+          "manifest": "./src/extensions/retentionControls/RetentionControlsCommandSet.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "RetentionControlsCommandSetStrings": "lib/extensions/retentionControls/loc/{locale}.js"
+  }
+}

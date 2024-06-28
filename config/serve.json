@@ -1,0 +1,29 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/spfx-serve.schema.json",
+  "port": 4321,
+  "https": true,
+  "serveConfigurations": {
+    "default": {
+      "pageUrl": "https://{tenantDomain}/SitePages/myPage.aspx",
+      "customActions": {
+        "0145d26d-75dd-41e3-8dbf-f245474fc2e6": {
+          "location": "ClientSideExtension.ListViewCommandSet.CommandBar",
+          "properties": {
+            "sampleTextOne": "One item is selected in the list",
+            "sampleTextTwo": "This command is always visible."
+          }
+        }
+      }
+    },
+    "retentionControls": {
+      "pageUrl": "https://blimped.sharepoint.com/sites/learning/TestLibrary2",
+      "customActions": {
+        "0145d26d-75dd-41e3-8dbf-f245474fc2e6": {
+          "location": "ClientSideExtension.ListViewCommandSet",
+          "properties": {
+          }
+        }
+      }
+    }
+  }
+}

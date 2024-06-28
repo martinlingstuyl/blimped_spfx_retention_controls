@@ -1,0 +1,53 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "Blimped SPFx Retention Controls Client Side Solution",
+    "id": "39608f99-117d-457c-9001-79c8d257aab5",
+    "version": "1.0.1.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "Martin Lingstuyl",
+      "websiteUrl": "https://www.blimped.nl",
+      "privacyUrl": "https://www.blimped.nl",
+      "termsOfUseUrl": "https://www.blimped.nl",
+      "mpnId": "Undefined-1.19.0"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "View retention information and clear retention labels from files"
+      },
+      "longDescription": {
+        "default": "View retention information and clear retention labels from files"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "Application Extension - Deployment of custom action",
+        "description": "Deploys a custom action with ClientSideComponentId association",
+        "id": "f5893d8b-17c7-4895-90c9-e074e73a611f",
+        "version": "1.0.0.0",
+        "assets": {
+          "elementManifests": [
+            "elements.xml",
+            "ClientSideInstance.xml"
+          ]
+        }
+      }
+    ],
+    "webApiPermissionRequests": [
+      {
+        "resource": "Microsoft Graph",
+        "scope": "Sites.ReadWrite.All"
+      }
+    
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/blimped-spfx-retention-controls.sppkg"
+  }
+}
