@@ -1,8 +1,10 @@
 declare interface IRetentionControlsCommandSetStrings {
   RetentionControlsHeader: string;
   RetentionLabelApplied: string;
+  RetentionLabelsApplied: string;
   RetentionLabelApplicationDate: string;
   RetentionLabelAppliedBy: string;
+  RetentionLabelEventDate: string;
   RecordStatus: string;
   IsDeleteAllowed: string;
   BehaviorDuringRetentionPeriod: string;
@@ -14,6 +16,7 @@ declare interface IRetentionControlsCommandSetStrings {
   Locked: string;
   Unlocked: string;
   Toggling: string;
+  Clearing: string;
   ToggleLockStatus: string;
   BehaviorRetain: string;
   BehaviorDoNotRetain: string;
@@ -22,6 +25,7 @@ declare interface IRetentionControlsCommandSetStrings {
   NoLabelApplied: string;
   MultipleItemsSelected: string;
   ClearLabel: string;
+  ClearLabels: string;
   LabelCleared: string;
   RecordStatusToggled: string;
   CloseModal: string;
@@ -36,7 +40,7 @@ declare interface IRetentionControlsCommandSetStrings {
   RecordStatusTooltip: string;
 }
 
-declare module 'RetentionControlsCommandSetStrings' {
+declare module "RetentionControlsCommandSetStrings" {
   const strings: IRetentionControlsCommandSetStrings;
   export = strings;
 }
