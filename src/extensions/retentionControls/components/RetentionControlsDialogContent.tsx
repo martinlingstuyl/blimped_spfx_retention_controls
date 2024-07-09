@@ -254,7 +254,7 @@ const RetentionControlsDialogContent: React.FC<IRetentionControlsDialogProps> = 
             </Stack.Item>
             <Stack.Item grow={1} styles={stackItemStyles}>
               <Shimmer width={250} height={16} isDataLoaded={!loading}>
-                <div>{driveItemLabel?.labelAppliedBy?.user?.displayName}</div>
+                <div>{driveItemLabel?.labelAppliedBy?.user?.displayName || (driveItemLabel?.labelAppliedBy as { application?: { displayName: string } })?.application?.displayName}</div>
               </Shimmer>
             </Stack.Item>
           </Stack>

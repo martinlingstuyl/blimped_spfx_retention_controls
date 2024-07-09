@@ -3,7 +3,7 @@
   "solution": {
     "name": "Blimped SPFx Retention Controls Client Side Solution",
     "id": "39608f99-117d-457c-9001-79c8d257aab5",
-    "version": "1.0.2.0",
+    "version": "1.0.3.0",
     "includeClientSideAssets": true,
     "skipFeatureDeployment": true,
     "isDomainIsolated": false,
