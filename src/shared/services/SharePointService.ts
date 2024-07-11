@@ -5,8 +5,10 @@ import { IRetentionLabel } from "../interfaces/IRetentionLabel";
 import { Warning } from "../Warning";
 import * as strings from "RetentionControlsCommandSetStrings";
 import { format } from "@fluentui/react";
+import { IListItemFields } from "../interfaces/IListItemFields";
 
 export interface ISharePointService {
+  getListItemFields: (listId: string, listItemId: number) => Promise<IListItemFields>;
   getRetentionSettings: (listId: string, listItemId: number) => Promise<IRetentionLabel | undefined>;
   clearRetentionLabels: (listItemId: number[]) => Promise<void>;
   toggleLockStatus: (listItemId: string, lockStatus: boolean) => Promise<void>;
@@ -25,6 +27,19 @@ export class SharePointService implements ISharePointService {
     });
   }
 
+  public async getListItemFields(listId: string, listItemId: number): Promise<IListItemFields> {
+    const requestUrl = `${this._pageContext.site.absoluteUrl}/_api/web/lists(guid'${listId}')/items(${listItemId})?$select=TagEventDate`;
+    const response = await this._spoHttpClient.get(requestUrl, SPHttpClient.configurations.v1);
+
+    if (!response.ok) {
+      const error: { error: { message: string } } = await response.json();
+      throw new Error(error?.error?.message ?? strings.UnhandledError);
+    }
+
+    const responseContent: IListItemFields = await response.json();
+    return responseContent;
+  }
+
   public async getRetentionSettings(listId: string, listItemId: number): Promise<IRetentionLabel> {
     const driveId = await this.getDriveId(listId);
     const driveItemId = await this.getDriveItemId(driveId, listItemId);
@@ -35,7 +50,8 @@ export class SharePointService implements ISharePointService {
     const response = await this._spoHttpClient.get(requestUrl, SPHttpClient.configurations.v1);
 
     if (!response.ok) {
-      throw new Error(strings.UnhandledError);
+      const error: { error: { message: string } } = await response.json();
+      throw new Error(error?.error?.message ?? strings.UnhandledError);
     }
 
     const responseContent: IRetentionLabel = await response.json();
@@ -60,8 +76,9 @@ export class SharePointService implements ISharePointService {
       body: JSON.stringify(body),
     });
 
-    if (!response) {
-      throw new Error(strings.UnhandledError);
+    if (!response.ok) {
+      const error: { error: { message: string } } = await response.json();
+      throw new Error(error?.error?.message ?? strings.UnhandledError);
     }
 
     const content: { value?: number[] } = await response.json();
@@ -92,7 +109,8 @@ export class SharePointService implements ISharePointService {
     });
 
     if (!response.ok) {
-      throw new Error(strings.UnhandledError);
+      const error: { error: { message: string } } = await response.json();
+      throw new Error(error?.error?.message ?? strings.UnhandledError);
     }
   }
 
@@ -111,7 +129,8 @@ export class SharePointService implements ISharePointService {
     const response = await this._spoHttpClient.get(requestUrl, SPHttpClient.configurations.v1);
 
     if (!response.ok) {
-      throw new Error(strings.UnhandledError);
+      const error: { error: { message: string } } = await response.json();
+      throw new Error(error?.error?.message ?? strings.UnhandledError);
     }
 
     const responseContent: { drive: { id: string } } = await response.json();
@@ -126,7 +145,8 @@ export class SharePointService implements ISharePointService {
     const response = await this._spoHttpClient.get(requestUrl, SPHttpClient.configurations.v1);
 
     if (!response.ok) {
-      throw new Error(strings.UnhandledError);
+      const error: { error: { message: string } } = await response.json();
+      throw new Error(error?.error?.message ?? strings.UnhandledError);
     }
 
     const responseContent: { value: { id: string }[] } = await response.json();
