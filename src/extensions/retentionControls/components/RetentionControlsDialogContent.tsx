@@ -82,6 +82,20 @@ const RetentionControlsDialogContent: React.FC<IRetentionControlsDialogProps> = 
   const [driveItemLabel, setDriveItemLabel] = useState<IRetentionLabel | undefined>();
   const spoService = props.context.serviceScope.consume(SharePointService.serviceKey);
 
+  const fetchData = async (): Promise<IRetentionLabel | undefined> => {
+    try {
+      const listItemIds = props.listItems.map((item) => parseFloat(item.getValueByName("ID")));
+      const response = await spoService.getRetentionSettings(props.listId, listItemIds[0]);
+      setDriveItemLabel(response);
+      setLoading(false);
+
+      return response;
+    } catch (error) {
+      setError(error.message);
+      setLoading(false);
+    }
+  };
+
   const clearLabel = async (): Promise<void> => {
     setSuccessMessage(undefined);
     setError(undefined);
@@ -94,7 +108,7 @@ const RetentionControlsDialogContent: React.FC<IRetentionControlsDialogProps> = 
 
       setClearing(true);
       const listItemIds = props.listItems.map((item) => parseFloat(item.getValueByName("ID")));
-      await spoService.clearRetentionLabels(props.listId, listItemIds);
+      await spoService.clearRetentionLabels(listItemIds);
       setDriveItemLabel(undefined);
       setSuccessMessage(strings.LabelCleared);
       setClearing(false);
@@ -113,15 +127,12 @@ const RetentionControlsDialogContent: React.FC<IRetentionControlsDialogProps> = 
     setError(undefined);
     setWarning(undefined);
 
-    if (driveItemLabel?.driveId === undefined || driveItemLabel?.driveItemId === undefined) {
-      return;
-    }
-
     try {
       setToggling(true);
-      const newDriveItemLabel = await spoService.toggleLockStatus(driveItemLabel.driveId, driveItemLabel.driveItemId, driveItemLabel?.retentionSettings?.isRecordLocked === true ? false : true);
-      setDriveItemLabel(newDriveItemLabel);
-      setSuccessMessage(format(strings.RecordStatusToggled, newDriveItemLabel?.retentionSettings?.isRecordLocked === true ? strings.Locked.toLowerCase() : strings.Unlocked.toLowerCase()));
+      await spoService.toggleLockStatus(props.listItems[0].getValueByName("ID"), driveItemLabel?.retentionSettings?.isRecordLocked === true ? false : true);
+      const retentionLabel = await fetchData();
+
+      setSuccessMessage(format(strings.RecordStatusToggled, retentionLabel?.retentionSettings?.isRecordLocked === true ? strings.Locked.toLowerCase() : strings.Unlocked.toLowerCase()));
       setToggling(false);
     } catch (error) {
       setError(error.message);
@@ -130,18 +141,6 @@ const RetentionControlsDialogContent: React.FC<IRetentionControlsDialogProps> = 
   };
 
   React.useEffect(() => {
-    const fetchData = async (): Promise<void> => {
-      try {
-        const listItemIds = props.listItems.map((item) => parseFloat(item.getValueByName("ID")));
-        const response = await spoService.getRetentionSettings(props.listId, listItemIds[0]);
-        setDriveItemLabel(response);
-        setLoading(false);
-      } catch (error) {
-        setError(error.message);
-        setLoading(false);
-      }
-    };
-
     if (props.listItems.length === 1) {
       fetchData().catch(() => {
         setError(error);
@@ -151,7 +150,7 @@ const RetentionControlsDialogContent: React.FC<IRetentionControlsDialogProps> = 
     }
   }, []);
 
-  const applied = driveItemLabel?.labelAppliedDateTime ? new Date(driveItemLabel.labelAppliedDateTime).toLocaleDateString() : "N/A";
+  //const labelAppliedDateGraph = driveItemLabel?.labelAppliedDateTime ? new Date(driveItemLabel.labelAppliedDateTime).toLocaleDateString() : "N/A";
 
   // Get a unique list of retention labels applied to the selected items
   const retentionLabels = props.listItems
@@ -164,10 +163,12 @@ const RetentionControlsDialogContent: React.FC<IRetentionControlsDialogProps> = 
     .filter((date) => date !== undefined && date !== null && date !== "")
     .map((date) => new Date(date).toLocaleDateString());
 
-  //   const labelAppliedDate = props.listItems
-  //     .map((item) => item.getValueByName("_ComplianceTagWrittenTime"))
-  //     .filter((date) => date !== undefined && date !== null && date !== "")
-  //     .map((date) => new Date(date).toLocaleDateString());
+  const labelAppliedDate = props.listItems
+    .map((item) => item.getValueByName("_ComplianceTagWrittenTime.")) //_ComplianceTagWrittenTime. gets an ISO date string
+    .filter((date) => date !== undefined && date !== null && date !== "")
+    .map((date) => new Date(date).toLocaleDateString());
+
+  const labelAppliedBy = props.listItems.map((item) => item.getValueByName("_ComplianceTagUserId"));
 
   return (
     <DialogContent styles={{ content: { maxWidth: "600px" } }} type={DialogType.largeHeader} responsiveMode={ResponsiveMode.small} showCloseButton={true} title={strings.RetentionControlsHeader} onDismiss={props.close}>
@@ -236,26 +237,19 @@ const RetentionControlsDialogContent: React.FC<IRetentionControlsDialogProps> = 
           </Stack>
           <Stack horizontal tokens={stackTokens}>
             <Stack.Item grow={1} styles={stackItemStyles}>
-              <Shimmer width={50} height={16} isDataLoaded={!loading}>
-                <strong>{strings.RetentionLabelApplicationDate}</strong>
-              </Shimmer>
+              <strong>{strings.RetentionLabelApplicationDate}</strong>
             </Stack.Item>
             <Stack.Item grow={1} styles={stackItemStyles}>
-              <Shimmer width={250} height={16} isDataLoaded={!loading}>
-                <div>{applied}</div>
-              </Shimmer>
+              <div>{labelAppliedDate}</div>
             </Stack.Item>
           </Stack>
           <Stack horizontal tokens={stackTokens}>
             <Stack.Item grow={1} styles={stackItemStyles}>
-              <Shimmer width={70} height={16} isDataLoaded={!loading}>
-                <strong>{strings.RetentionLabelAppliedBy}</strong>
-              </Shimmer>
+              <strong>{strings.RetentionLabelAppliedBy}</strong>
             </Stack.Item>
             <Stack.Item grow={1} styles={stackItemStyles}>
-              <Shimmer width={250} height={16} isDataLoaded={!loading}>
-                <div>{driveItemLabel?.labelAppliedBy?.user?.displayName || (driveItemLabel?.labelAppliedBy as { application?: { displayName: string } })?.application?.displayName}</div>
-              </Shimmer>
+              <div>{labelAppliedBy}</div>
+              {/* <div>{driveItemLabel?.labelAppliedBy?.user?.displayName || (driveItemLabel?.labelAppliedBy as { application?: { displayName: string } })?.application?.displayName}</div> */}
             </Stack.Item>
           </Stack>
 
