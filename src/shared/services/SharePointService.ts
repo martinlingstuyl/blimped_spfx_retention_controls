@@ -8,7 +8,7 @@ import { format } from "@fluentui/react";
 import { IListItemFields } from "../interfaces/IListItemFields";
 
 export interface ISharePointService {
-  getListItemFields: (listId: string, listItemId: number) => Promise<IListItemFields>;
+  getListItemFields: (listId: string, listItemId: number) => Promise<IListItemFields | undefined>;
   getRetentionSettings: (listId: string, listItemId: number) => Promise<IRetentionLabel | undefined>;
   clearRetentionLabels: (listItemId: number[]) => Promise<void>;
   toggleLockStatus: (listItemId: string, lockStatus: boolean) => Promise<void>;
@@ -27,12 +27,20 @@ export class SharePointService implements ISharePointService {
     });
   }
 
-  public async getListItemFields(listId: string, listItemId: number): Promise<IListItemFields> {
+  public async getListItemFields(listId: string, listItemId: number): Promise<IListItemFields | undefined> {
     const requestUrl = `${this._pageContext.site.absoluteUrl}/_api/web/lists(guid'${listId}')/items(${listItemId})?$select=TagEventDate`;
     const response = await this._spoHttpClient.get(requestUrl, SPHttpClient.configurations.v1);
 
     if (!response.ok) {
       const error: { error: { message: string } } = await response.json();
+
+      // Explainer: If the error "The field or property 'TagEventDate' does not exist." is returned,
+      // it means the column is not present in the list because no event-based retention label
+      // has been used. Just return nothing in that case.
+      if (error?.error?.message.indexOf("TagEventDate") > -1) {
+        return;
+      }
+
       throw new Error(error?.error?.message ?? strings.UnhandledError);
     }
 
