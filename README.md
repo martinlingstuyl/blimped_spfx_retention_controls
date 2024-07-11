@@ -2,7 +2,7 @@
 
 ## Summary
 
-Using this solution you can: 
+Using this solution you can:
 
 - view retention information from files and folders labeled with a retention label.
 - toggle record lock status
@@ -30,18 +30,17 @@ This solution comes in handy if you choose to not publish any retention label, f
 
 > Publish the SPFx package to your app catalog
 > Ensure the solution is made available across your tenant
-> Accept the `Sites.ReadWrite.All` permission request in the API Access screen of the SharePoint Admin dashboard.
 
 ## Solution
 
-| Solution    | Author(s)                                               |
-| ----------- | ------------------------------------------------------- |
+| Solution    | Author(s)                 |
+| ----------- | ------------------------- |
 | folder name | Martin Lingstuyl, Blimped |
 
 ## Version history
 
-| Version | Date             | Comments        |
-| ------- | ---------------- | --------------- |
+| Version | Date          | Comments        |
+| ------- | ------------- | --------------- |
 | 1.0.1.0 | June 28, 2024 | Initial release |
 
 ## Disclaimer
