@@ -383,32 +383,38 @@ const RetentionControlsDialogContent: React.FC<IRetentionControlsDialogProps> = 
             </Stack.Item>
           </Stack>
 
-          <Stack horizontal tokens={stackTokens}>
-            <Stack.Item grow={1} styles={stackItemStyles}>
-              <Shimmer width={100} height={16} isDataLoaded={!loading}>
-                <strong>{strings.RecordStatus}</strong>
-                <FontIcon style={{ marginLeft: "6px", cursor: "pointer" }} iconName="Info" title={strings.RecordStatusTooltip} className={classNames.blue} />
-              </Shimmer>
-            </Stack.Item>
-            <Stack.Item grow={1} styles={stackItemStyles}>
-              <Shimmer width={50} height={16} isDataLoaded={!loading}>
-                <>
-                  {driveItemLabel?.retentionSettings?.isRecordLocked === true ? (
+          {driveItemLabel?.retentionSettings?.behaviorDuringRetentionPeriod === "retainAsRecord" ? (
+            <>
+              <Stack horizontal tokens={stackTokens}>
+                <Stack.Item grow={1} styles={stackItemStyles}>
+                  <Shimmer width={100} height={16} isDataLoaded={!loading}>
+                    <strong>{strings.RecordStatus}</strong>
+                    <FontIcon style={{ marginLeft: "6px", cursor: "pointer" }} iconName="Info" title={strings.RecordStatusTooltip} className={classNames.blue} />
+                  </Shimmer>
+                </Stack.Item>
+                <Stack.Item grow={1} styles={stackItemStyles}>
+                  <Shimmer width={50} height={16} isDataLoaded={!loading}>
                     <>
-                      <FontIcon iconName="LockSolid" /> {strings.Locked}
+                      {driveItemLabel?.retentionSettings?.isRecordLocked === true ? (
+                        <>
+                          <FontIcon iconName="LockSolid" /> {strings.Locked}
+                        </>
+                      ) : (
+                        <>
+                          <FontIcon iconName="Unlock" /> {strings.Unlocked}
+                        </>
+                      )}
+                      <Link disabled={toggling} onClick={toggleLockStatus} style={{ marginLeft: "10px" }}>
+                        {toggling ? <Spinner size={SpinnerSize.xSmall} style={{ marginRight: "10px" }} labelPosition="right" label={strings.Toggling} /> : <>{strings.ToggleLockStatus}</>}
+                      </Link>
                     </>
-                  ) : (
-                    <>
-                      <FontIcon iconName="Unlock" /> {strings.Unlocked}
-                    </>
-                  )}
-                  <Link disabled={toggling} onClick={toggleLockStatus} style={{ marginLeft: "10px" }}>
-                    {toggling ? <Spinner size={SpinnerSize.xSmall} style={{ marginRight: "10px" }} labelPosition="right" label={strings.Toggling} /> : <>{strings.ToggleLockStatus}</>}
-                  </Link>
-                </>
-              </Shimmer>
-            </Stack.Item>
-          </Stack>
+                  </Shimmer>
+                </Stack.Item>
+              </Stack>
+            </>
+          ) : (
+            <></>
+          )}
         </Stack>
       ) : (
         <></>
