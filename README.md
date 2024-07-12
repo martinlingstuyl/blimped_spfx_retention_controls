@@ -31,18 +31,6 @@ This solution comes in handy if you choose to not publish any retention label, f
 > Publish the SPFx package to your app catalog
 > Ensure the solution is made available across your tenant
 
-## Solution
-
-| Solution    | Author(s)                 |
-| ----------- | ------------------------- |
-| folder name | Martin Lingstuyl, Blimped |
-
-## Version history
-
-| Version | Date          | Comments        |
-| ------- | ------------- | --------------- |
-| 1.0.1.0 | June 28, 2024 | Initial release |
-
 ## Disclaimer
 
 **THIS CODE IS PROVIDED _AS IS_ WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.**
