@@ -1,4 +1,3 @@
-import { DefaultButton, DialogContent, DialogFooter, DialogType, format, IDialogFooterStyles, IMessageBarStyles, IStackItemStyles, IStackTokens, Link, mergeStyles, mergeStyleSets, MessageBar, MessageBarType, ResponsiveMode, Shimmer, Spinner, SpinnerSize, Stack } from "@fluentui/react";
 import { BaseComponentContext } from "@microsoft/sp-component-base";
 import * as React from "react";
 import { SharePointService } from "../../../shared/services/SharePointService";
@@ -10,6 +9,16 @@ import { FontIcon } from "@fluentui/react/lib/Icon";
 import { Warning } from "../../../shared/Warning";
 import { RowAccessor } from "@microsoft/sp-listview-extensibility";
 import { IListItemFields } from "../../../shared/interfaces/IListItemFields";
+import { format } from "@fluentui/react/lib/Utilities";
+import { IMessageBarStyles, MessageBar, MessageBarType } from "@fluentui/react/lib/MessageBar";
+import { DialogContent, DialogFooter, DialogType, IDialogFooterStyles } from "@fluentui/react/lib/Dialog";
+import { ResponsiveMode } from "@fluentui/react/lib/ResponsiveMode";
+import { IStackItemStyles, IStackTokens, Stack } from "@fluentui/react/lib/Stack";
+import { mergeStyles, mergeStyleSets } from "@fluentui/react/lib/Styling";
+import { Spinner, SpinnerSize } from "@fluentui/react/lib/Spinner";
+import { Link } from "@fluentui/react/lib/Link";
+import { Shimmer } from "@fluentui/react/lib/Shimmer";
+import { DefaultButton } from "@fluentui/react/lib/Button";
 initializeIcons();
 
 export interface IRetentionControlsDialogProps {
