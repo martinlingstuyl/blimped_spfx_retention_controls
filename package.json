@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@fluentui/react": "8.118.9",
+    "@fluentui/react-file-type-icons": "8.11.21",
     "@microsoft/decorators": "1.19.0",
     "@microsoft/sp-core-library": "1.19.0",
     "@microsoft/sp-dialog": "1.19.0",

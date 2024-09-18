@@ -7,12 +7,28 @@ Using this solution you can:
 - view retention information from files and folders labeled with a retention label.
 - toggle record lock status
 - clear the retention label from a file or folder.
+- bulk toggle record status for selected items or the entire library.
+- bulk clear labels for selected items or the entire library.
 
 This solution comes in handy if you choose to not publish any retention label, for example for purposes of automatic labelling. In such a scenario, the retention label dropdown would not be visible, and thus it would be impossible to clear the label of an item.
 
+Opening the Retention Controls dialog:
+
 ![Opening the retention controls screen](screenshot_1.jpg)
 
+Viewing retention information for a single selected item:
+
 ![The retention controls screen](screenshot_2.jpg)
+
+Viewing retention information for multiple selected items or the entire library:
+
+![Retention controls for the entire library](screenshot_3.jpg)
+
+Taking action on a single item, all selected items or the entire library:
+
+![Executing actions](screenshot_4.jpg)
+
+> "Take bulk action" encompasses the entire library if no items were selected before opening the retention controls dialog.
 
 ## Used SharePoint Framework Version
 
