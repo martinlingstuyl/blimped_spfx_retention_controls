@@ -421,8 +421,8 @@ export const MultiItemView: React.FC<IMultiItemView> = (props) => {
         <DefaultButton onClick={props.onClose} text={strings.CloseModal} />
         <Stack horizontal tokens={{ childrenGap: 10 }}>
 
-          <PrimaryButton menuProps={menuProps} menuAs={getMenu} iconProps={{ iconName: "MultiSelect"}} text={strings.TakeBulkActionsSelectedItems} title={strings.TakeBulkActionsSelectedItemsTooltip} disabled={!itemsWithMetadata || itemsWithMetadata?.length === 0 || executingAction} />
           { executingAction ? <Spinner label={actionStatus} labelPosition="right" size={SpinnerSize.small} /> : <></> }
+          <PrimaryButton menuProps={menuProps} menuAs={getMenu} iconProps={{ iconName: "MultiSelect"}} text={strings.TakeBulkActionsSelectedItems} title={strings.TakeBulkActionsSelectedItemsTooltip} disabled={!itemsWithMetadata || itemsWithMetadata?.length === 0 || executingAction} />
         </Stack>
       </DialogFooter>
     </Dialog>    

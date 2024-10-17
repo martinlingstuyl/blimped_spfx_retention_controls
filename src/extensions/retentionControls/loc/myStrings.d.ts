@@ -18,6 +18,8 @@ declare interface IRetentionControlsCommandSetStrings {
   ClearLabelConfirmationTitle: string;
   ClearLabelConfirmationMessage: string;
   CloseModal: string;
+  ConfirmEntireLibraryImpactTitle: string;
+  ConfirmEntireLibraryImpactMessage: string;
   ErrorFetchingData: string;
   FileName: string;
   IsContentUpdateAllowed: string;

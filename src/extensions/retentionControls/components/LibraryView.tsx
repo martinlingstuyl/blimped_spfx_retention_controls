@@ -23,6 +23,7 @@ import { ResponsiveMode } from "@fluentui/react/lib/ResponsiveMode";
 import { IPagedDriveItems } from "../../../shared/interfaces/IPagedDriveItems";
 import { itemMetadataColumns } from "../../../shared/constants";
 import { IDriveItem } from "../../../shared/interfaces/IDriveItem";
+import ConfirmationDialogManager from "../ConfirmationDialogManager";
 
 export interface ILibraryView {
   onClose: () => void;
@@ -165,7 +166,7 @@ export const LibraryView: React.FC<ILibraryView> = (props) => {
     Promise.resolve().then(async () => {
       if (itemsWithMetadata === undefined) {
         return;
-      }
+      }      
       
       Log.info(LOG_SOURCE, `Toggling record status for all items`);
       
@@ -330,6 +331,18 @@ export const LibraryView: React.FC<ILibraryView> = (props) => {
   const onRenderItemColumn = (item: IItemMetadata, index: number, column: ICustomColumn): JSX.Element => {
     return <ItemColumn item={item} itemState={itemsState.filter(i => i.listItemId === item.id)[0]} column={column} onToggling={onTogglingRecord} onClearing={onClearingLabel} />;
   }
+
+  const showConfirmationDialog = (title: string, message: string, callback: () => void): void => {
+    Promise.resolve().then(async () => {
+      const dialog = new ConfirmationDialogManager(title, message);
+      dialog.onClosed(async (confirmed?: boolean) => {
+        if (confirmed === true) {
+          callback();
+        }
+      });
+      await dialog.show();
+    }).catch(error => console.log(error));
+  }
   
   const menuProps: IContextualMenuProps = {  
     items: [
@@ -337,21 +350,21 @@ export const LibraryView: React.FC<ILibraryView> = (props) => {
         key: 'lockRecords',
         text: strings.LockRecords,
         title: strings.LockRecordsTooltip,
-        onClick: () => onTogglingAllRecords(true),
+        onClick: () => showConfirmationDialog(strings.ConfirmEntireLibraryImpactTitle, strings.ConfirmEntireLibraryImpactMessage, () => onTogglingAllRecords(true)),
         iconProps: { iconName: 'Lock' },
       },
       {
         key: 'unlockRecords',
         text: strings.UnlockRecords,
         title: strings.UnlockRecordsTooltip,
-        onClick: () => onTogglingAllRecords(false),
+        onClick: () => showConfirmationDialog(strings.ConfirmEntireLibraryImpactTitle, strings.ConfirmEntireLibraryImpactMessage, () => onTogglingAllRecords(false)),
         iconProps: { iconName: 'Unlock' },
       },
       {
         key: 'clearAllLabels',
         text: strings.ClearLabels,
         title: strings.ClearLabelsTooltip,
-        onClick: () => onClearingAllLabels(),
+        onClick: () => showConfirmationDialog(strings.ConfirmEntireLibraryImpactTitle, strings.ConfirmEntireLibraryImpactMessage, () => onClearingAllLabels()),
         iconProps: { iconName: 'Untag' },
       },
     ],
@@ -410,8 +423,8 @@ export const LibraryView: React.FC<ILibraryView> = (props) => {
         <DefaultButton onClick={props.onClose} text={strings.CloseModal} />
         <Stack horizontal tokens={{ childrenGap: 10 }}>
 
-          <PrimaryButton menuProps={menuProps} menuAs={getMenu} iconProps={{ iconName: "MultiSelect"}} text={strings.TakeBulkActionsEntireLibrary} title={strings.TakeBulkActionsEntireLibraryTooltip} disabled={!itemsWithMetadata || itemsWithMetadata?.length === 0 || executingAction} />
           { executingAction ? <><Spinner label={actionStatus} labelPosition="right" size={SpinnerSize.small} /> </> : <></> }
+          <PrimaryButton menuProps={menuProps} menuAs={getMenu} iconProps={{ iconName: "MultiSelect"}} text={strings.TakeBulkActionsEntireLibrary} title={strings.TakeBulkActionsEntireLibraryTooltip} disabled={!itemsWithMetadata || itemsWithMetadata?.length === 0 || executingAction} />
         </Stack>
       </DialogFooter>
     </Dialog>
