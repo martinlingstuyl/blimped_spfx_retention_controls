@@ -3,7 +3,6 @@ import { SPHttpClient } from "@microsoft/sp-http";
 import { PageContext } from "@microsoft/sp-page-context";
 import { IRetentionLabel } from "../interfaces/IRetentionLabel";
 import * as strings from "RetentionControlsCommandSetStrings";
-import { IListItemFields } from "../interfaces/IListItemFields";
 import { IDriveItem as IDriveItem } from "../interfaces/IDriveItem";
 import { IBatchItemResponse } from "../interfaces/IBatchErrorResponse";
 import { IPagedDriveItems } from "../interfaces/IPagedDriveItems";
@@ -12,7 +11,6 @@ export interface ISharePointService {
   getPagedDriveItems(listId: string, pageSize?: number): Promise<IPagedDriveItems>
   getPagedDriveItemsUsingNextLink(nextLink: string): Promise<IPagedDriveItems>
   getDriveItems: (listId: string, listItemId: number[]) => Promise<IDriveItem[]>;
-  getListItemFields: (listId: string, listItemId: number) => Promise<IListItemFields | undefined>;
   getRetentionSettings: (listId: string, listItemId: number) => Promise<IRetentionLabel | undefined>;
   clearRetentionLabels: (listItemIds: number[]) => Promise<IBatchItemResponse[]>;
   toggleLockStatus: (listItemIds: number[], lockStatus: boolean) => Promise<IBatchItemResponse[]>;
@@ -39,7 +37,7 @@ export class SharePointService implements ISharePointService {
     const requestUrl = `${this._pageContext.site.absoluteUrl}/_api/v2.0/drives/${driveId}/items`;
     
     const queryStrings = [
-      `$filter=retentionLabel/name ne null`,
+      `$filter=listItem/fields/_ComplianceTag ne null`,      
       `$expand=retentionLabel,listItem($select=id,contentType;$expand=fields($select=FileLeafRef,TagEventDate))`,
       `$select=id,name,parentReference,retentionLabel,id,listItem`,
       `$top=${pageSize}`
@@ -58,10 +56,10 @@ export class SharePointService implements ISharePointService {
   public async getDriveItems(listId: string, listItemId: number[]): Promise<IDriveItem[]> {
     const driveId = await this.getDriveId(listId);
     const requestUrl = `${this._pageContext.site.absoluteUrl}/_api/v2.0/drives/${driveId}/items`;
-    const filterString = listItemId.map((id) => `listItem/id eq '${id}'`).join(" or ");
+    const filterString = listItemId.map((id) => `listItem/fields/id eq '${id}'`).join(" or ");
     const queryStrings = [
       `$filter=${filterString}`,
-      `$expand=retentionLabel,listItem($select=id,contentType;$expand=fields($select=FileLeafRef,TagEventDate))`,
+      `$expand=retentionLabel,listItem($select=id,contentType;$expand=fields($select=id,FileLeafRef,TagEventDate))`,
       `$select=id,name,parentReference,retentionLabel,id,listItem`
     ];
 
@@ -74,27 +72,6 @@ export class SharePointService implements ISharePointService {
     
     const responseContent: { value: IDriveItem[] } = await response.json();
     return responseContent.value;
-  }
-
-  public async getListItemFields(listId: string, listItemId: number): Promise<IListItemFields | undefined> {
-    const requestUrl = `${this._pageContext.site.absoluteUrl}/_api/web/lists(guid'${listId}')/items(${listItemId})?$select=TagEventDate`;
-    const response = await this._spoHttpClient.get(requestUrl, SPHttpClient.configurations.v1);
-
-    if (!response.ok) {
-      const error: { error: { message: string } } = await response.json();
-
-      // Explainer: If the error "The field or property 'TagEventDate' does not exist." is returned,
-      // it means the column is not present in the list because no event-based retention label
-      // has been used. Just return nothing in that case.
-      if (error?.error?.message.indexOf("TagEventDate") > -1) {
-        return;
-      }
-
-      throw new Error(error?.error?.message ?? strings.UnhandledError);
-    }
-
-    const responseContent: IListItemFields = await response.json();
-    return responseContent;
   }
 
   public async getRetentionSettings(listId: string, listItemId: number): Promise<IRetentionLabel> {
@@ -226,7 +203,7 @@ export class SharePointService implements ISharePointService {
 
   private async getDriveItemId(driveId: string, listItemId: number): Promise<string> {
     const siteUrl = new URL(this._pageContext.site.absoluteUrl);
-    const requestUrl = `${siteUrl.protocol}//${siteUrl.host}/_api/v2.0/drives/${driveId}/items?$filter=sharepointIds/listItemId eq '${listItemId}'&$select=sharepointIds,id`;
+    const requestUrl = `${siteUrl.protocol}//${siteUrl.host}/_api/v2.0/drives/${driveId}/items?$filter=listItem/fields/id eq '${listItemId}'&$select=id`;
     const response = await this._spoHttpClient.get(requestUrl, SPHttpClient.configurations.v1);
 
     if (!response.ok) {
