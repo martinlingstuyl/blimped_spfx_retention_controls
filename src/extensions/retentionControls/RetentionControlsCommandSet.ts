@@ -1,8 +1,11 @@
 import { Log } from "@microsoft/sp-core-library";
 import { BaseListViewCommandSet, RowAccessor, type Command, type IListViewCommandSetExecuteEventParameters, type ListViewStateChangedEventArgs } from "@microsoft/sp-listview-extensibility";
 import RetentionControlsDialogManager from "./RetentionControlsDialogManager";
+import { IPermissions } from "../../shared/interfaces/IPermissions";
 
-export interface IRetentionControlsCommandSetProperties {}
+export interface IRetentionControlsCommandSetProperties {
+  permissions?: IPermissions;
+}
 
 export const LOG_SOURCE: string = "RetentionControlsCommandSet";
 
@@ -32,7 +35,13 @@ export default class RetentionControlsCommandSet extends BaseListViewCommandSet<
       return _complianceTag !== undefined && _complianceTag !== ""
     });
 
-    const dialog = new RetentionControlsDialogManager(this.context, this.context.pageContext.list.id.toString(), itemsWithLabel, listItems.length);
+    const dialog = new RetentionControlsDialogManager(
+      this.context, 
+      this.context.pageContext.list.id.toString(), 
+      itemsWithLabel, 
+      listItems.length,
+      this.properties.permissions
+    );
     await dialog.show();
   };
 

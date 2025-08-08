@@ -27,7 +27,9 @@ import { IItemMetadata } from "../../../shared/interfaces/IItemMetadata";
 initializeIcons();
 
 export interface ISingleItemView {
+  isServedFromLocalhost: boolean;
   listItems: readonly RowAccessor[];
+  hasEditPermissions: boolean;
   onClose: () => void;
   onFetching: (listItemIds: number[]) => Promise<IDriveItem[]>;
   onClearing: (listItemIds: number[]) => Promise<IBatchItemResponse[]>;
@@ -181,13 +183,22 @@ export const SingleItemView: React.FC<ISingleItemView> = (props) => {
 
   return <>
     <Dialog maxWidth={"600px"} hidden={false} dialogContentProps={{ type:DialogType.largeHeader, title: strings.RetentionControlsHeader, responsiveMode: ResponsiveMode.small, showCloseButton: true, onDismiss: props.onClose}}>
+      {
+        props.isServedFromLocalhost ? (
+          <div style={{ marginBottom: 20 }}>
+            <MessageBar messageBarType={MessageBarType.success}>Served from localhost</MessageBar>
+          </div>
+        ) : (
+          <></>
+        )
+      }
       {notification ? (
         <MessageBar styles={messageBarStyles} messageBarType={notification.notificationType}>
           {notification.message}
         </MessageBar>
       ) : (
         <></>
-      )}    
+      )}         
       {
         listItem ? <>
           <Stack tokens={{ childrenGap: 10 }}>
@@ -212,7 +223,7 @@ export const SingleItemView: React.FC<ISingleItemView> = (props) => {
                   }
                   {
                     !loading && itemDetails?.retentionLabel !== undefined ? 
-                      <Link disabled={loading || itemState.clearing} onClick={() => onClearClick()} style={{ marginLeft: "10px" }}>
+                      <Link disabled={loading || itemState.clearing || !props.hasEditPermissions} onClick={() => onClearClick()} style={{ marginLeft: "10px" }}>
                         {itemState.clearing ? <Spinner size={SpinnerSize.xSmall} style={{ marginRight: "10px" }} labelPosition="right" label={strings.Clearing} /> : <>{strings.ClearLabel}</>}
                       </Link>
                     : <></>
@@ -381,7 +392,7 @@ export const SingleItemView: React.FC<ISingleItemView> = (props) => {
                             <FontIcon iconName="Unlock" /> {strings.Unlocked}
                           </>
                         )}
-                        <Link disabled={itemState.toggling} onClick={() => onToggleClick()} style={{ marginLeft: "10px" }}>
+                        <Link disabled={itemState.toggling || !props.hasEditPermissions} onClick={() => onToggleClick()} style={{ marginLeft: "10px" }}>
                           {itemState.toggling ? <Spinner size={SpinnerSize.xSmall} style={{ marginRight: "10px" }} labelPosition="right" label={strings.Toggling} /> : <>{strings.ToggleLockStatus}</>}
                         </Link>
                       </>

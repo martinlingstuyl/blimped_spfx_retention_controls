@@ -30,6 +30,10 @@ Taking action on a single item, all selected items or the entire library:
 
 > "Take bulk action" encompasses the entire library if no items were selected before opening the retention controls dialog.
 
+## Permissions 
+
+It's possible to restrict the actions of the retention controls extension to specific Entra ID groups or users. For more information, see [Retention Controls Permissions Configuration](PERMISSIONS.md). 
+
 ## Used SharePoint Framework Version
 
 ![version](https://img.shields.io/badge/version-1.19.0-green.svg)

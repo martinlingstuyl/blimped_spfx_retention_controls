@@ -16,6 +16,7 @@ export interface IItemColumn {
   item: IItemMetadata;
   itemState?: IItemState;
   column: ICustomColumn;
+  hasEditPermissions: boolean;
   onClearing: (item: IItemMetadata) => void;
   onToggling: (item: IItemMetadata) => void;
 }
@@ -84,12 +85,12 @@ export const ItemColumn: React.FC<IItemColumn> = (props) => {
       return <Spinner size={SpinnerSize.xSmall} />;
     }    
     if (itemState?.errorToggling !== undefined) {      
-      return <FontIcon iconName="Warning" className={classNames.red} title={format(strings.ToggleWarning, item.isRecordLocked === true ? strings.Locked : strings.Unlocked, itemState.errorToggling)} onClick={() => onToggleClick(item)} />;
+      return <FontIcon iconName="Warning" className={classNames.red} title={format(strings.ToggleWarning, item.isRecordLocked === true ? strings.Locked : strings.Unlocked, itemState.errorToggling)} onClick={props.hasEditPermissions ? () => onToggleClick(item) : undefined} />;
     }
     if (item.isRecordLocked === true) {
-      return <FontIcon iconName="LockSolid" className={classNames.dark} title={column.title + ": " + strings.Locked} onClick={() => onToggleClick(item)} />;
+      return <FontIcon iconName="LockSolid" className={classNames.dark} title={column.title + ": " + strings.Locked} onClick={props.hasEditPermissions ? () => onToggleClick(item) : undefined} />;
     } else if (item.isRecordLocked === false) {
-      return <FontIcon iconName="Unlock" className={classNames.dark} title={column.title + ": " + strings.Unlocked} onClick={() => onToggleClick(item)} />;
+      return <FontIcon iconName="Unlock" className={classNames.dark} title={column.title + ": " + strings.Unlocked} onClick={props.hasEditPermissions ? () => onToggleClick(item) : undefined} />;
     } 
 
     return <></>;      
@@ -99,10 +100,10 @@ export const ItemColumn: React.FC<IItemColumn> = (props) => {
       return <Spinner size={SpinnerSize.xSmall} />;
     }
     if (itemState?.errorClearing === true) {
-      return <FontIcon iconName="Warning" className={classNames.red} title={strings.ClearLabelWarningTooltip} onClick={() => onClearClick(item)} />;
+      return <FontIcon iconName="Warning" className={classNames.red} title={strings.ClearLabelWarningTooltip} onClick={props.hasEditPermissions ? () => onClearClick(item) : undefined} />;
     }
 
-    return <FontIcon iconName="Untag" className={classNames.dark} title={column.title} onClick={() => onClearClick(item)} />;
+    return <FontIcon iconName="Untag" className={classNames.dark} title={column.title} onClick={props.hasEditPermissions ? () => onClearClick(item) : undefined} />;
   }
 
   const fieldValue = item[column.key as keyof IItemMetadata] as string;

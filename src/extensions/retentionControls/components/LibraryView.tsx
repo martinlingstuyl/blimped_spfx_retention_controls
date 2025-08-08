@@ -26,6 +26,8 @@ import { IDriveItem } from "../../../shared/interfaces/IDriveItem";
 import ConfirmationDialogManager from "../ConfirmationDialogManager";
 
 export interface ILibraryView {
+  isServedFromLocalhost: boolean;
+  hasEditPermissions: boolean;
   onClose: () => void;
   onFetching: (listItemIds: number[]) => Promise<IDriveItem[]>;
   onFetchingPaged: (pageSize: number, nextLink?: string) => Promise<IPagedDriveItems>;
@@ -329,7 +331,7 @@ export const LibraryView: React.FC<ILibraryView> = (props) => {
   }
 
   const onRenderItemColumn = (item: IItemMetadata, index: number, column: ICustomColumn): JSX.Element => {
-    return <ItemColumn item={item} itemState={itemsState.filter(i => i.listItemId === item.id)[0]} column={column} onToggling={onTogglingRecord} onClearing={onClearingLabel} />;
+    return <ItemColumn item={item} itemState={itemsState.filter(i => i.listItemId === item.id)[0]} column={column} hasEditPermissions={props.hasEditPermissions} onToggling={onTogglingRecord} onClearing={onClearingLabel} />;
   }
 
   const showConfirmationDialog = (title: string, message: string, callback: () => void): void => {
@@ -352,6 +354,7 @@ export const LibraryView: React.FC<ILibraryView> = (props) => {
         title: strings.LockRecordsTooltip,
         onClick: () => showConfirmationDialog(strings.ConfirmEntireLibraryImpactTitle, strings.ConfirmEntireLibraryImpactMessage, () => onTogglingAllRecords(true)),
         iconProps: { iconName: 'Lock' },
+        disabled: !props.hasEditPermissions,
       },
       {
         key: 'unlockRecords',
@@ -359,6 +362,7 @@ export const LibraryView: React.FC<ILibraryView> = (props) => {
         title: strings.UnlockRecordsTooltip,
         onClick: () => showConfirmationDialog(strings.ConfirmEntireLibraryImpactTitle, strings.ConfirmEntireLibraryImpactMessage, () => onTogglingAllRecords(false)),
         iconProps: { iconName: 'Unlock' },
+        disabled: !props.hasEditPermissions,
       },
       {
         key: 'clearAllLabels',
@@ -366,6 +370,7 @@ export const LibraryView: React.FC<ILibraryView> = (props) => {
         title: strings.ClearLabelsTooltip,
         onClick: () => showConfirmationDialog(strings.ConfirmEntireLibraryImpactTitle, strings.ConfirmEntireLibraryImpactMessage, () => onClearingAllLabels()),
         iconProps: { iconName: 'Untag' },
+        disabled: !props.hasEditPermissions,
       },
     ],
     directionalHintFixed: true,
@@ -395,6 +400,15 @@ export const LibraryView: React.FC<ILibraryView> = (props) => {
 
   return <>
     <Dialog maxWidth={"1200px"} hidden={false} dialogContentProps={{ type:DialogType.largeHeader, title: strings.RetentionControlsHeader, responsiveMode: ResponsiveMode.small, topButtonsProps: paginationButtons, showCloseButton: true, onDismiss: props.onClose}}>
+      {
+        props.isServedFromLocalhost ? (
+          <div style={{ marginBottom: 20 }}>
+            <MessageBar messageBarType={MessageBarType.success}>Served from localhost</MessageBar>
+          </div>
+        ) : (
+          <></>
+        )
+      } 
       {notification ? (
         <MessageBar styles={messageBarStyles} messageBarType={notification.notificationType}>
           {notification.message}

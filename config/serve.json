@@ -21,6 +21,16 @@
         "0145d26d-75dd-41e3-8dbf-f245474fc2e6": {
           "location": "ClientSideExtension.ListViewCommandSet",
           "properties": {
+            "permissions": {
+              "entries": [
+                {
+                  "groupId": "74fe5242-1a4d-4e90-9b37-2e980687a568"
+                },
+                {
+                  "userName": "adele@blimped.nl"
+                }
+              ]
+            }
           }
         }
       }

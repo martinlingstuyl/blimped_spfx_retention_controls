@@ -3,11 +3,18 @@ import * as ReactDOM from "react-dom";
 import RetentionControlsDialog from "./components/RetentionControlsDialog";
 import * as React from "react";
 import { RowAccessor } from "@microsoft/sp-listview-extensibility";
+import { IPermissions } from "../../shared/interfaces/IPermissions";
 
 export default class RetentionControlsDialogManager {
   private domElement: HTMLDivElement | null = null;
 
-  constructor(private context: BaseComponentContext, private listId: string, private listItems: readonly RowAccessor[], private selectedItems: number) {
+  constructor(
+    private context: BaseComponentContext, 
+    private listId: string, 
+    private listItems: readonly RowAccessor[], 
+    private selectedItems: number,
+    private permissions?: IPermissions
+  ) {
   }
 
   public async close(): Promise<void> {
@@ -26,7 +33,16 @@ export default class RetentionControlsDialogManager {
         await this.close();
     };
 
-    ReactDOM.render(<RetentionControlsDialog context={this.context} listId={this.listId} listItems={this.listItems} selectedItems={this.selectedItems} onClose={close} />, 
-      this.domElement);
+    ReactDOM.render(
+      <RetentionControlsDialog 
+        context={this.context} 
+        listId={this.listId} 
+        listItems={this.listItems} 
+        selectedItems={this.selectedItems} 
+        permissions={this.permissions}
+        onClose={close} 
+      />, 
+      this.domElement
+    );
   }
 }
